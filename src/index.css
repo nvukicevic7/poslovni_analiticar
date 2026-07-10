@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", system-ui, "Segoe UI", Roboto, sans-serif;
+
+  /* Brand: dark navy + white, serious business tool */
+  --color-navy-950: #0a1a30;
+  --color-navy-900: #0f2747;
+  --color-navy-800: #15335c;
+  --color-navy-700: #1c4173;
+  --color-navy-600: #2a5590;
+  --color-navy-500: #3987e5;
+  --color-navy-100: #e7edf5;
+  --color-navy-50: #f4f7fb;
+
+  /* Status / semantic (from validated palette) */
+  --color-good: #0ca30c;
+  --color-warning: #eda100;
+  --color-critical: #d03b3b;
+
+  /* Chart categorical (validated set, fixed order) */
+  --color-chart-1: #2a78d6;
+  --color-chart-2: #1baf7a;
+  --color-chart-3: #eda100;
+  --color-chart-4: #008300;
+  --color-chart-5: #4a3aa7;
+  --color-chart-6: #e34948;
+  --color-chart-7: #e87ba4;
+  --color-chart-8: #eb6834;
+}
+
+html {
+  font-family: var(--font-sans);
+}
+
+body {
+  margin: 0;
+  background: var(--color-navy-50);
+  color: #1a1d23;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #c3cbd9;
+  border-radius: 6px;
+}
