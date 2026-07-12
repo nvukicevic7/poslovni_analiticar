@@ -1,16 +1,21 @@
-import Anthropic from "@anthropic-ai/sdk";
-import { ALL_INSTRUMENTS, type CalendarEvent, type Instrument, type NewsItem } from "../../src/types/index.ts";
+// Type-only import: erased at compile time, so it never triggers loading the
+// actual SDK module. The real (value) import happens lazily in getClient(),
+// so a demo-mode request (no API key) never touches the SDK at all, and any
+// import-time failure of the SDK itself can't break the mock fallback path.
+import type Anthropic from "@anthropic-ai/sdk";
+import { ALL_INSTRUMENTS, type CalendarEvent, type Instrument, type NewsItem } from "../../src/types/index";
 
 const MODEL = "claude-opus-4-8";
 const MAX_TOKENS = 8000;
-const MAX_CONTINUATIONS = 3;
+const MAX_CONTINUATIONS = 1;
 
-function getClient(): Anthropic {
+async function getClient(): Promise<InstanceType<typeof Anthropic>> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     throw new Error("ANTHROPIC_API_KEY nije podešen.");
   }
-  return new Anthropic({ apiKey });
+  const { default: AnthropicClient } = await import("@anthropic-ai/sdk");
+  return new AnthropicClient({ apiKey });
 }
 
 async function runWithWebSearch(
@@ -18,16 +23,16 @@ async function runWithWebSearch(
   userPrompt: string,
   schema: Record<string, unknown>,
 ): Promise<unknown> {
-  const client = getClient();
+  const client = await getClient();
   let messages: Anthropic.MessageParam[] = [{ role: "user", content: userPrompt }];
 
   const requestParams = () => ({
     model: MODEL,
     max_tokens: MAX_TOKENS,
     system: systemPrompt,
-    tools: [{ type: "web_search_20260209" as const, name: "web_search" as const, max_uses: 6 }],
+    tools: [{ type: "web_search_20260209" as const, name: "web_search" as const, max_uses: 4 }],
     output_config: {
-      effort: "medium" as const,
+      effort: "low" as const,
       format: { type: "json_schema" as const, schema },
     },
     messages,

@@ -40,8 +40,10 @@ export default function App() {
       const res = await fetchCalendar(instruments);
       setEvents(res.events);
       setCalendarNote(res.note ?? null);
-    } catch {
-      setCalendarNote("Nije moguće učitati ekonomski kalendar. Proverite da li je API pokrenut (npr. `vercel dev`).");
+    } catch (err) {
+      console.error("Greška pri učitavanju kalendara:", err);
+      const detail = err instanceof Error ? err.message : "";
+      setCalendarNote(`Nije moguće učitati ekonomski kalendar.${detail ? ` (${detail})` : ""}`);
     } finally {
       setLoadingCalendar(false);
     }
@@ -60,8 +62,10 @@ export default function App() {
       setNews(res.items);
       setNewsNote(res.note ?? null);
       setNewsUpdatedAt(res.generatedAt);
-    } catch {
-      setError("Nije moguće učitati vesti. Proverite da li je API pokrenut (npr. `vercel dev`).");
+    } catch (err) {
+      console.error("Greška pri učitavanju vesti:", err);
+      const detail = err instanceof Error ? err.message : "";
+      setError(`Nije moguće učitati vesti.${detail ? ` (${detail})` : ""}`);
     } finally {
       setLoadingNews(false);
     }

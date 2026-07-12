@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { ALL_INSTRUMENTS, type Instrument, type NewsResponse } from "../src/types/index.ts";
-import { fetchNewsFromClaude } from "./_lib/claude.ts";
-import { getMockNews } from "./_lib/mockData.ts";
+import { ALL_INSTRUMENTS, type Instrument, type NewsResponse } from "../src/types/index";
+import { fetchNewsFromClaude } from "./_lib/claude";
+import { getMockNews } from "./_lib/mockData";
 
 function parseInstruments(body: unknown): Instrument[] {
   const raw = (body as { instruments?: unknown } | null | undefined)?.instruments;
@@ -16,20 +16,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
-  const instruments = parseInstruments(req.body);
-
-  if (!process.env.ANTHROPIC_API_KEY) {
-    const response: NewsResponse = {
-      items: getMockNews(instruments),
-      generatedAt: new Date().toISOString(),
-      isMock: true,
-      note: "ANTHROPIC_API_KEY nije podešen na serveru — prikazani su demo podaci.",
-    };
-    res.status(200).json(response);
-    return;
-  }
-
+  // Every branch below funnels through this single try/catch, so any
+  // unexpected failure (bad body, a broken import, an SDK error) still
+  // yields a graceful mock JSON response instead of an opaque 500 that
+  // breaks the frontend fetch entirely.
+  let instruments: Instrument[] = ALL_INSTRUMENTS;
   try {
+    instruments = parseInstruments(req.body);
+
+    if (!process.env.ANTHROPIC_API_KEY) {
+      const response: NewsResponse = {
+        items: getMockNews(instruments),
+        generatedAt: new Date().toISOString(),
+        isMock: true,
+        note: "ANTHROPIC_API_KEY nije podešen na serveru — prikazani su demo podaci.",
+      };
+      res.status(200).json(response);
+      return;
+    }
+
     const items = await fetchNewsFromClaude(instruments);
     const response: NewsResponse = { items, generatedAt: new Date().toISOString(), isMock: false };
     res.status(200).json(response);

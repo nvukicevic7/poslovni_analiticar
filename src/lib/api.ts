@@ -2,9 +2,13 @@ import type { CalendarResponse, Instrument, NewsResponse } from "../types/index.
 
 async function parseJsonOrThrow<T>(res: Response): Promise<T> {
   if (!res.ok) {
-    throw new Error(`Server je vratio grešku (${res.status}).`);
+    throw new Error(`Server je vratio grešku (${res.status} ${res.statusText}).`);
   }
-  return (await res.json()) as T;
+  try {
+    return (await res.json()) as T;
+  } catch {
+    throw new Error("Server nije vratio ispravan JSON odgovor.");
+  }
 }
 
 export async function fetchNews(instruments: Instrument[]): Promise<NewsResponse> {
