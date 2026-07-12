@@ -66,3 +66,22 @@ export interface AnalysisResult {
   topCustomers: CustomerSummary[];
   alerts: Alert[];
 }
+
+export type RecommendationPriority = "visok" | "srednji" | "nizak";
+
+export interface Recommendation {
+  id: string;
+  priority: RecommendationPriority;
+  title: string;
+  explanation: string;
+  action: string;
+}
+
+export type HealthLabel = "Odlično" | "Dobro" | "Osrednje" | "Zabrinjavajuće";
+
+export interface BusinessHealth {
+  score: number; // 0-100
+  label: HealthLabel;
+  summary: string;
+  factors: string[];
+}
