@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { ALL_INSTRUMENTS, type Instrument, type NewsResponse } from "./_lib/types";
-import { fetchNewsFromClaude } from "./_lib/claude";
-import { getMockNews } from "./_lib/mockData";
+import { ALL_INSTRUMENTS, type Instrument, type NewsResponse } from "./_lib/types.ts";
+import { fetchNewsFromClaude } from "./_lib/claude.ts";
+import { getMockNews } from "./_lib/mockData.ts";
 
 function parseInstruments(body: unknown): Instrument[] {
   const raw = (body as { instruments?: unknown } | null | undefined)?.instruments;

@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { ALL_INSTRUMENTS, type CalendarResponse, type Instrument } from "./_lib/types";
-import { fetchCalendarFromClaude } from "./_lib/claude";
-import { getMockCalendar } from "./_lib/mockData";
+import { ALL_INSTRUMENTS, type CalendarResponse, type Instrument } from "./_lib/types.ts";
+import { fetchCalendarFromClaude } from "./_lib/claude.ts";
+import { getMockCalendar } from "./_lib/mockData.ts";
 
 function parseInstruments(query: VercelRequest["query"]): Instrument[] {
   const raw = query.instruments;
