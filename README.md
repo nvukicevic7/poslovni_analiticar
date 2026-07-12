@@ -1,27 +1,49 @@
-# AI Poslovni Analitičar
+# AI Trading Vesti Sažetak
 
-Web aplikacija za analizu poslovnih podataka namenjena malim i srednjim firmama.
-Korisnik otpremi Excel ili CSV fajl sa podacima o prodaji i troškovima, a aplikacija
-automatski izračunava ključne pokazatelje, prikazuje grafikone i upozorava na
-neobične promene u poslovanju. Sva obrada se dešava lokalno u pregledaču — podaci se
-nigde ne šalju.
+Web aplikacija za praćenje makro vesti relevantnih za trgovanje na forexu i indeksima. Dashboard prikazuje
+najnovije vesti (Fed odluke, PCE/CPI/GDP podaci, kamatne stope, izjave centralnih banaka, geopolitički
+događaji) sa AI sažetkom na srpskom, oznakom pogođenih instrumenata i procenom da li je vest bullish,
+bearish ili neutralna — uz ekonomski kalendar predstojećih događaja.
 
 ## Funkcionalnost
 
-- Otpremanje `.csv`, `.xlsx` i `.xls` fajlova (drag & drop ili izbor fajla)
-- Pregled: ukupan prihod, ukupni troškovi, profit, broj transakcija
-- Top 5 proizvoda/usluga po prihodu (grafikon i tabela)
-- Trend prodaje i troškova kroz vreme (grafikon po mesecima)
-- Automatska upozorenja na neobične promene (nagli pad prihoda, rast troškova, pad marže)
-- Pitanja prirodnim jezikom o učitanim podacima (npr. „Koliko sam zaradio u martu?”)
-- Dugme „Isprobaj sa test podacima” za trenutni demo
+- Izbor praćenih instrumenata: XAU/USD, GBP/USD, EUR/USD, GBP/JPY
+- Dugme „Osveži vesti" koje pokreće pretragu najnovijih vesti preko Claude API-ja (web pretraga uživo)
+- Za svaku vest: naslov, izvor, AI sažetak na srpskom (2-3 rečenice), pogođeni instrumenti i
+  bullish/bearish/neutralna oznaka sa obrazloženjem
+- Sekcija „Ekonomski kalendar" sa najvažnijim predstojećim makro događajima
+- Tamna tema, dizajn u stilu pravog trading dashboarda
+- Demo režim sa realističnim primerima vesti kada `ANTHROPIC_API_KEY` nije podešen — aplikacija je odmah
+  upotrebljiva za testiranje UI-ja bez API ključa
 
-## Pokretanje
+## Arhitektura
+
+- **Frontend**: React + TypeScript + Tailwind CSS (Vite)
+- **Backend**: Vercel serverless funkcije u `api/` folderu (`api/news.ts`, `api/calendar.ts`) koje pozivaju
+  Claude API sa `web_search` alatom i strukturiranim JSON izlazom. `ANTHROPIC_API_KEY` se koristi
+  isključivo na serveru i nikada se ne šalje u pregledač.
+
+## Pokretanje lokalno
+
+Pošto aplikacija koristi Vercel serverless funkcije, za potpuno lokalno testiranje (uključujući API
+pozive) koristi se Vercel CLI:
 
 ```bash
 npm install
+npm install -g vercel   # ako već nije instaliran
+vercel dev
+```
+
+Kopiraj `.env.example` u `.env` i podesi `ANTHROPIC_API_KEY` da bi vesti i kalendar dolazili sa uživo
+Claude web pretragom. Bez ključa, aplikacija radi u demo režimu sa mock podacima.
+
+Za rad samo na frontend delu (bez API poziva) dovoljno je:
+
+```bash
 npm run dev
 ```
+
+u tom slučaju pozivi ka `/api/*` neće raditi (404) — koristi `vercel dev` kada testiraš pravu funkcionalnost.
 
 ## Build za produkciju
 
@@ -30,24 +52,18 @@ npm run build
 npm run preview
 ```
 
-Izlaz builda (`dist/`) je statički sajt spreman za deploy na bilo koji hosting za
-statičke fajlove (Vercel, Netlify, Cloudflare Pages, GitHub Pages, itd.).
+## Deploy
 
-## Format ulaznog fajla
+Aplikacija je spremna za deploy na [Vercel](https://vercel.com):
 
-Aplikacija prepoznaje kolone po nazivu (srpski i engleski nazivi su podržani):
+```bash
+vercel
+```
 
-| Podatak | Prepoznati nazivi kolona |
-|---|---|
-| Datum | Datum, Date |
-| Proizvod/usluga | Proizvod, Usluga, Artikal, Product, Item |
-| Kupac | Kupac, Klijent, Customer |
-| Prihod | Prihod, Prodaja, Cena, Iznos, Revenue, Amount |
-| Trošak | Trošak, Troškovi, Cost, Expense |
-| Kategorija (opciono) | Kategorija, Category |
-
-Primer test fajla se nalazi u `public/test-podaci.csv`.
+Podesi environment varijablu `ANTHROPIC_API_KEY` u Vercel projekat settings-ima (Project → Settings →
+Environment Variables) da bi vesti dolazile uživo umesto demo podataka.
 
 ## Tehnologije
 
-React, TypeScript, Vite, Tailwind CSS, Recharts, PapaParse, SheetJS (xlsx).
+React, TypeScript, Vite, Tailwind CSS, Anthropic Claude API (`@anthropic-ai/sdk`) sa `web_search` alatom i
+strukturiranim JSON izlazom, Vercel serverless funkcije.

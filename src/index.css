@@ -2,41 +2,47 @@
 
 @theme {
   --font-sans: "Inter", system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 
-  /* Brand: dark navy + white, serious business tool */
-  --color-navy-950: #0a1a30;
-  --color-navy-900: #0f2747;
-  --color-navy-800: #15335c;
-  --color-navy-700: #1c4173;
-  --color-navy-600: #2a5590;
-  --color-navy-500: #3987e5;
-  --color-navy-100: #e7edf5;
-  --color-navy-50: #f4f7fb;
+  /* Dark trading-terminal palette */
+  --color-bg-950: #05070d;
+  --color-bg-900: #0a0e18;
+  --color-bg-850: #0e1320;
+  --color-bg-800: #131a2b;
+  --color-bg-700: #1b2438;
+  --color-bg-600: #263252;
+  --color-border-700: #232d45;
+  --color-border-600: #2e3a58;
 
-  /* Status / semantic (from validated palette) */
-  --color-good: #0ca30c;
-  --color-warning: #eda100;
-  --color-critical: #d03b3b;
+  --color-text-100: #e9edf7;
+  --color-text-300: #b7c0d6;
+  --color-text-500: #7c88a6;
 
-  /* Chart categorical (validated set, fixed order) */
-  --color-chart-1: #2a78d6;
-  --color-chart-2: #1baf7a;
-  --color-chart-3: #eda100;
-  --color-chart-4: #008300;
-  --color-chart-5: #4a3aa7;
-  --color-chart-6: #e34948;
-  --color-chart-7: #e87ba4;
-  --color-chart-8: #eb6834;
+  --color-accent-500: #3b82f6;
+  --color-accent-400: #60a5fa;
+
+  /* Semantic — bullish / bearish / neutral */
+  --color-bullish-500: #22c55e;
+  --color-bullish-400: #4ade80;
+  --color-bearish-500: #ef4444;
+  --color-bearish-400: #f87171;
+  --color-neutral-500: #94a3b8;
+  --color-neutral-400: #cbd5e1;
+
+  --color-importance-high: #ef4444;
+  --color-importance-medium: #eda100;
+  --color-importance-low: #64748b;
 }
 
 html {
   font-family: var(--font-sans);
+  color-scheme: dark;
 }
 
 body {
   margin: 0;
-  background: var(--color-navy-50);
-  color: #1a1d23;
+  background: var(--color-bg-950);
+  color: var(--color-text-100);
 }
 
 ::-webkit-scrollbar {
@@ -47,6 +53,6 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #c3cbd9;
+  background: var(--color-bg-600);
   border-radius: 6px;
 }

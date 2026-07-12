@@ -1,168 +1,161 @@
-import { useMemo, useState } from "react";
-import { FileUpload } from "./components/FileUpload";
-import { OverviewCards } from "./components/OverviewCards";
-import { TopProducts } from "./components/TopProducts";
-import { TrendChart } from "./components/TrendChart";
-import { Alerts } from "./components/Alerts";
-import { QuestionBox } from "./components/QuestionBox";
-import { BusinessHealthBadge } from "./components/BusinessHealthBadge";
-import { Recommendations } from "./components/Recommendations";
-import { DownloadReportButton } from "./components/DownloadReportButton";
-import { parseBusinessFile } from "./lib/fileParser";
-import { analyzeTransactions } from "./lib/analysis";
-import { suggestedQuestions } from "./lib/qa";
-import { computeBusinessHealth } from "./lib/health";
-import { generateRecommendations } from "./lib/recommendations";
-import type { ParseResult } from "./types";
+import { useCallback, useEffect, useState } from "react";
+import { InstrumentSelector } from "./components/InstrumentSelector.tsx";
+import { NewsCard } from "./components/NewsCard.tsx";
+import { EconomicCalendar } from "./components/EconomicCalendar.tsx";
+import { fetchCalendar, fetchNews } from "./lib/api.ts";
+import { ALL_INSTRUMENTS, type CalendarEvent, type Instrument, type NewsItem } from "./types/index.ts";
 
-const REPORT_ELEMENT_ID = "report-content";
-
-function Header({ fileName, onReset, showDownload }: { fileName: string | null; onReset: () => void; showDownload: boolean }) {
+function Header() {
   return (
-    <header className="border-b border-navy-800 bg-navy-900">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/10">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.5l4.5-4.5 4 4L21 4.5M21 4.5H15M21 4.5v6M3 20.25h18" />
-            </svg>
-          </div>
-          <div>
-            <p className="text-base font-semibold text-white leading-tight">AI Poslovni Analitičar</p>
-            <p className="text-xs text-navy-100/70 leading-tight">Analitika za male i srednje firme</p>
-          </div>
+    <header className="border-b border-border-700 bg-bg-900">
+      <div className="mx-auto flex max-w-6xl items-center gap-3 px-6 py-4">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-500/15">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-accent-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.5l4.5-4.5 4 4L21 4.5M21 4.5H15M21 4.5v6M3 20.25h18" />
+          </svg>
         </div>
-        {fileName && (
-          <div className="flex items-center gap-4">
-            <span className="hidden text-sm text-navy-100/80 sm:inline">{fileName}</span>
-            {showDownload && (
-              <DownloadReportButton targetId={REPORT_ELEMENT_ID} fileName="poslovni-izvestaj.pdf" />
-            )}
-            <button
-              onClick={onReset}
-              className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
-            >
-              Učitaj drugi fajl
-            </button>
-          </div>
-        )}
+        <div>
+          <p className="text-base font-semibold leading-tight text-text-100">AI Trading Vesti Sažetak</p>
+          <p className="text-xs leading-tight text-text-500">Makro vesti i kalendar za forex i indekse</p>
+        </div>
       </div>
     </header>
   );
 }
 
 export default function App() {
-  const [parseResult, setParseResult] = useState<ParseResult | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [selected, setSelected] = useState<Instrument[]>(ALL_INSTRUMENTS);
+  const [news, setNews] = useState<NewsItem[]>([]);
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [newsNote, setNewsNote] = useState<string | null>(null);
+  const [calendarNote, setCalendarNote] = useState<string | null>(null);
+  const [newsUpdatedAt, setNewsUpdatedAt] = useState<string | null>(null);
+  const [loadingNews, setLoadingNews] = useState(false);
+  const [loadingCalendar, setLoadingCalendar] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const analysis = useMemo(
-    () => (parseResult ? analyzeTransactions(parseResult.transactions) : null),
-    [parseResult]
-  );
-
-  const health = useMemo(() => (analysis ? computeBusinessHealth(analysis) : null), [analysis]);
-  const recommendations = useMemo(
-    () => (analysis ? generateRecommendations(analysis) : []),
-    [analysis]
-  );
-
-  async function handleFile(file: File) {
-    setIsLoading(true);
-    setError(null);
+  const loadCalendar = useCallback(async (instruments: Instrument[]) => {
+    setLoadingCalendar(true);
     try {
-      const result = await parseBusinessFile(file);
-      if (result.transactions.length === 0) {
-        setError(
-          result.warnings.join(" ") ||
-            "Nije moguće pronaći validne podatke u fajlu. Proverite format i pokušajte ponovo."
-        );
-        setIsLoading(false);
-        return;
-      }
-      setParseResult(result);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Došlo je do greške prilikom čitanja fajla.");
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  async function handleLoadSample() {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch("/test-podaci.csv");
-      const blob = await response.blob();
-      const file = new File([blob], "test-podaci.csv", { type: "text/csv" });
-      await handleFile(file);
+      const res = await fetchCalendar(instruments);
+      setEvents(res.events);
+      setCalendarNote(res.note ?? null);
     } catch {
-      setError("Nije moguće učitati test podatke.");
-      setIsLoading(false);
+      setCalendarNote("Nije moguće učitati ekonomski kalendar. Proverite da li je API pokrenut (npr. `vercel dev`).");
+    } finally {
+      setLoadingCalendar(false);
     }
-  }
+  }, []);
 
-  function handleReset() {
-    setParseResult(null);
+  const loadNews = useCallback(async (instruments: Instrument[]) => {
+    if (instruments.length === 0) {
+      setNews([]);
+      setError("Izaberite bar jedan instrument.");
+      return;
+    }
+    setLoadingNews(true);
     setError(null);
-  }
+    try {
+      const res = await fetchNews(instruments);
+      setNews(res.items);
+      setNewsNote(res.note ?? null);
+      setNewsUpdatedAt(res.generatedAt);
+    } catch {
+      setError("Nije moguće učitati vesti. Proverite da li je API pokrenut (npr. `vercel dev`).");
+    } finally {
+      setLoadingNews(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadNews(ALL_INSTRUMENTS);
+    loadCalendar(ALL_INSTRUMENTS);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <div className="min-h-screen bg-navy-50">
-      <Header fileName={parseResult?.fileName ?? null} onReset={handleReset} showDownload={!!analysis} />
+    <div className="min-h-screen bg-bg-950">
+      <Header />
 
-      <main className="mx-auto max-w-6xl px-6 py-10">
-        {!analysis ? (
-          <div className="py-10">
-            <div className="mx-auto mb-10 max-w-2xl text-center">
-              <h1 className="text-3xl font-semibold tracking-tight text-navy-900">
-                Razumite svoje poslovanje za par sekundi
-              </h1>
-              <p className="mt-3 text-base text-slate-500">
-                Otpremite Excel ili CSV fajl sa podacima o prodaji i troškovima — aplikacija automatski
-                izračunava prihod, profit, trendove i upozorava vas na neobične promene.
-              </p>
-            </div>
-            <FileUpload
-              onFileSelected={handleFile}
-              onLoadSample={handleLoadSample}
-              isLoading={isLoading}
-              error={error}
-            />
+      <main className="mx-auto max-w-6xl space-y-8 px-6 py-8">
+        <section className="rounded-xl border border-border-700 bg-bg-900 p-5">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <InstrumentSelector selected={selected} onChange={setSelected} />
+            <button
+              type="button"
+              onClick={() => {
+                loadNews(selected);
+                loadCalendar(selected);
+              }}
+              disabled={loadingNews}
+              className="inline-flex items-center gap-2 rounded-lg bg-accent-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-400 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {loadingNews ? (
+                <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg>
+              )}
+              Osveži vesti
+            </button>
           </div>
-        ) : (
-          <div className="space-y-6">
-            {parseResult && parseResult.warnings.length > 0 && (
-              <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                {parseResult.warnings.join(" ")}
-              </div>
+          {newsNote && <p className="mt-3 rounded-lg bg-amber-500/10 px-3 py-2 text-xs text-amber-400">{newsNote}</p>}
+        </section>
+
+        <section>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-text-100">Najnovije vesti</h2>
+            {newsUpdatedAt && (
+              <span className="text-xs text-text-500">
+                Ažurirano: {new Date(newsUpdatedAt).toLocaleTimeString("sr-RS", { hour: "2-digit", minute: "2-digit" })}
+              </span>
             )}
-
-            <div id={REPORT_ELEMENT_ID} className="space-y-6 bg-navy-50">
-              {health && <BusinessHealthBadge health={health} />}
-
-              <OverviewCards overview={analysis.overview} />
-
-              <Alerts alerts={analysis.alerts} />
-
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <TrendChart monthly={analysis.monthly} />
-                <TopProducts products={analysis.topProducts} />
-              </div>
-
-              <Recommendations recommendations={recommendations} />
-            </div>
-
-            <QuestionBox
-              transactions={parseResult!.transactions}
-              suggestions={suggestedQuestions(analysis)}
-            />
           </div>
-        )}
+
+          {error && <p className="rounded-xl border border-bearish-500/30 bg-bearish-500/10 p-4 text-sm text-bearish-400">{error}</p>}
+
+          {!error && loadingNews && news.length === 0 && (
+            <div className="space-y-3">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="h-32 animate-pulse rounded-xl border border-border-700 bg-bg-850" />
+              ))}
+            </div>
+          )}
+
+          {!error && !loadingNews && news.length === 0 && (
+            <p className="rounded-xl border border-border-700 bg-bg-850 p-5 text-sm text-text-500">
+              Nema vesti za prikaz. Izaberite instrumente i kliknite „Osveži vesti“.
+            </p>
+          )}
+
+          <div className="space-y-3">
+            {news.map((item) => (
+              <NewsCard key={item.id} item={item} />
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-3 text-lg font-semibold text-text-100">Ekonomski kalendar — predstojeći događaji</h2>
+          {calendarNote && <p className="mb-3 rounded-lg bg-amber-500/10 px-3 py-2 text-xs text-amber-400">{calendarNote}</p>}
+          {loadingCalendar && events.length === 0 ? (
+            <div className="space-y-2">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="h-16 animate-pulse rounded-xl border border-border-700 bg-bg-850" />
+              ))}
+            </div>
+          ) : (
+            <EconomicCalendar events={events} />
+          )}
+        </section>
       </main>
 
-      <footer className="mx-auto max-w-6xl px-6 pb-10 pt-4 text-center text-xs text-slate-400">
-        AI Poslovni Analitičar — svi podaci se obrađuju lokalno u vašem pregledaču, ništa se ne šalje na server.
+      <footer className="mx-auto max-w-6xl px-6 pb-10 pt-4 text-center text-xs text-text-500">
+        AI Trading Vesti Sažetak — vesti i sažeci generisani su pomoću AI-ja i ne predstavljaju finansijski savet.
       </footer>
     </div>
   );
