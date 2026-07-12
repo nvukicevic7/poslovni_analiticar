@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { ALL_INSTRUMENTS, type CalendarResponse, type Instrument } from "../src/types/index";
+import { ALL_INSTRUMENTS, type CalendarResponse, type Instrument } from "./_lib/types";
 import { fetchCalendarFromClaude } from "./_lib/claude";
 import { getMockCalendar } from "./_lib/mockData";
 

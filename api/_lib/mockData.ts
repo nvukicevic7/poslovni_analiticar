@@ -1,4 +1,4 @@
-import type { CalendarEvent, Instrument, NewsItem } from "../../src/types/index";
+import type { CalendarEvent, Instrument, NewsItem } from "./types";
 
 const MOCK_NEWS: NewsItem[] = [
   {

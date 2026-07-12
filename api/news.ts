@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { ALL_INSTRUMENTS, type Instrument, type NewsResponse } from "../src/types/index";
+import { ALL_INSTRUMENTS, type Instrument, type NewsResponse } from "./_lib/types";
 import { fetchNewsFromClaude } from "./_lib/claude";
 import { getMockNews } from "./_lib/mockData";
 

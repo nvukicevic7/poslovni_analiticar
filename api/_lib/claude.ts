@@ -3,7 +3,7 @@
 // so a demo-mode request (no API key) never touches the SDK at all, and any
 // import-time failure of the SDK itself can't break the mock fallback path.
 import type Anthropic from "@anthropic-ai/sdk";
-import { ALL_INSTRUMENTS, type CalendarEvent, type Instrument, type NewsItem } from "../../src/types/index";
+import { ALL_INSTRUMENTS, type CalendarEvent, type Instrument, type NewsItem } from "./types";
 
 const MODEL = "claude-opus-4-8";
 const MAX_TOKENS = 8000;
