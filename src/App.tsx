@@ -5,12 +5,19 @@ import { TopProducts } from "./components/TopProducts";
 import { TrendChart } from "./components/TrendChart";
 import { Alerts } from "./components/Alerts";
 import { QuestionBox } from "./components/QuestionBox";
+import { BusinessHealthBadge } from "./components/BusinessHealthBadge";
+import { Recommendations } from "./components/Recommendations";
+import { DownloadReportButton } from "./components/DownloadReportButton";
 import { parseBusinessFile } from "./lib/fileParser";
 import { analyzeTransactions } from "./lib/analysis";
 import { suggestedQuestions } from "./lib/qa";
+import { computeBusinessHealth } from "./lib/health";
+import { generateRecommendations } from "./lib/recommendations";
 import type { ParseResult } from "./types";
 
-function Header({ fileName, onReset }: { fileName: string | null; onReset: () => void }) {
+const REPORT_ELEMENT_ID = "report-content";
+
+function Header({ fileName, onReset, showDownload }: { fileName: string | null; onReset: () => void; showDownload: boolean }) {
   return (
     <header className="border-b border-navy-800 bg-navy-900">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
@@ -28,6 +35,9 @@ function Header({ fileName, onReset }: { fileName: string | null; onReset: () =>
         {fileName && (
           <div className="flex items-center gap-4">
             <span className="hidden text-sm text-navy-100/80 sm:inline">{fileName}</span>
+            {showDownload && (
+              <DownloadReportButton targetId={REPORT_ELEMENT_ID} fileName="poslovni-izvestaj.pdf" />
+            )}
             <button
               onClick={onReset}
               className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
@@ -49,6 +59,12 @@ export default function App() {
   const analysis = useMemo(
     () => (parseResult ? analyzeTransactions(parseResult.transactions) : null),
     [parseResult]
+  );
+
+  const health = useMemo(() => (analysis ? computeBusinessHealth(analysis) : null), [analysis]);
+  const recommendations = useMemo(
+    () => (analysis ? generateRecommendations(analysis) : []),
+    [analysis]
   );
 
   async function handleFile(file: File) {
@@ -93,7 +109,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-navy-50">
-      <Header fileName={parseResult?.fileName ?? null} onReset={handleReset} />
+      <Header fileName={parseResult?.fileName ?? null} onReset={handleReset} showDownload={!!analysis} />
 
       <main className="mx-auto max-w-6xl px-6 py-10">
         {!analysis ? (
@@ -122,13 +138,19 @@ export default function App() {
               </div>
             )}
 
-            <OverviewCards overview={analysis.overview} />
+            <div id={REPORT_ELEMENT_ID} className="space-y-6 bg-navy-50">
+              {health && <BusinessHealthBadge health={health} />}
 
-            <Alerts alerts={analysis.alerts} />
+              <OverviewCards overview={analysis.overview} />
 
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              <TrendChart monthly={analysis.monthly} />
-              <TopProducts products={analysis.topProducts} />
+              <Alerts alerts={analysis.alerts} />
+
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <TrendChart monthly={analysis.monthly} />
+                <TopProducts products={analysis.topProducts} />
+              </div>
+
+              <Recommendations recommendations={recommendations} />
             </div>
 
             <QuestionBox
