@@ -1,0 +1,88 @@
+/*
+Theme Name:   Zrno Doma Child
+Theme URI:    https://zrnodoma.rs
+Description:  Child tema za internet prodavnicu "Zrno Doma" (Domaći zadatak 3 - Internet marketing, FON). Bazirana na Storefront temi.
+Author:       Zrno Doma tim
+Author URI:   https://zrnodoma.rs
+Template:     storefront
+Version:      1.0.0
+Text Domain:  zrno-doma-child
+*/
+
+/* ==========================================================================
+   Uputstvo: ova child tema se bazira na roditeljskoj temi Storefront
+   (besplatna, zvanična WooCommerce tema). Ako se koristi druga roditeljska
+   tema, promeniti vrednost "Template:" iznad na tačan slug te teme (naziv
+   foldera roditeljske teme u wp-content/themes/) i po potrebi prilagoditi
+   CSS selektore ispod.
+   ========================================================================== */
+
+:root {
+  --zrno-boja-primarna: #6f4e37;   /* tamno braon - kafa */
+  --zrno-boja-akcenat: #c8a165;    /* zlatno-bež - pečena zrna */
+  --zrno-boja-pozadina: #faf6f1;   /* topla bela pozadina */
+}
+
+/* Osnovna paleta boja prilagođena identitetu brenda "Zrno Doma" */
+body {
+  background-color: var(--zrno-boja-pozadina);
+}
+
+a,
+.woocommerce a.button.alt,
+.site-header-cart .cart-contents {
+  color: var(--zrno-boja-primarna);
+}
+
+.woocommerce a.button,
+.woocommerce button.button,
+.woocommerce input.button,
+.woocommerce #respond input#submit {
+  background-color: var(--zrno-boja-primarna);
+  border-color: var(--zrno-boja-primarna);
+  color: #fff;
+}
+
+.woocommerce a.button:hover,
+.woocommerce button.button:hover,
+.woocommerce input.button:hover {
+  background-color: var(--zrno-boja-akcenat);
+  border-color: var(--zrno-boja-akcenat);
+}
+
+/* Isticanje "upsell" i "cross-sell" (povezani proizvodi) sekcija na
+   stranici proizvoda - zahtev 7 iz specifikacije zadatka */
+.upsells.products,
+.related.products {
+  border-top: 2px solid var(--zrno-boja-akcenat);
+  padding-top: 2rem;
+  margin-top: 2rem;
+}
+
+.upsells.products > h2,
+.related.products > h2 {
+  color: var(--zrno-boja-primarna);
+  font-weight: 700;
+}
+
+/* Sitno poboljšanje čitljivosti bloga (edukativni sadržaj - Zadatak 1) */
+.single-post .entry-content {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  max-width: 760px;
+}
+
+/* Responsive provera - dodatna sigurnosna pravila za manje ekrane
+   (zahtev 11: automatsko prilagođavanje prikaza za mobilne uređaje) */
+@media (max-width: 768px) {
+  .site-header-cart {
+    width: 100%;
+  }
+
+  .upsells.products ul.products,
+  .related.products ul.products {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+}
