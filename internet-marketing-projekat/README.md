@@ -24,6 +24,7 @@ internet-marketing-projekat/
     ├── seo-checklist.md
     ├── chatbot-skripta-baza-znanja.md              <- unos u Tidio
     ├── katalog-proizvoda-woocommerce-import.csv    <- uvoz u WooCommerce (Products → Import)
+    ├── setup-wp-cli.sh                             <- automatizacija preko WP-CLI (opciono)
     └── child-tema-zrno-doma/
         ├── style.css
         └── functions.php
@@ -31,20 +32,42 @@ internet-marketing-projekat/
 
 ## Šta treba još da uradi tim (ne može se uraditi bez pristupa hostingu/nalozima)
 
-1. **WordPress + WooCommerce:** postaviti hosting (ili lokalno okruženje za vežbu),
-   instalirati Storefront temu, uploadovati `child-tema-zrno-doma/` kao ZIP.
-2. **Uvoz proizvoda:** WooCommerce → Products → Import →
-   `katalog-proizvoda-woocommerce-import.csv`.
-3. **Chatbot:** registrovati Tidio nalog, uneti sadržaj iz
+Pokušao sam da u ovom razvojnom okruženju podignem pravi lokalni WordPress (preko
+Dockera i direktnim preuzimanjem WordPress jezgra) da bih sve testirao i napravio
+prave screenshotove, ali mrežna politika sandbox-a blokira i Docker Hub i
+wordpress.org, pa to nije bilo izvodljivo odavde. Zato je pripremljena
+`setup-wp-cli.sh` skripta koja automatizuje najveći deo ručnih koraka — pokrećete je
+vi, na svom hostingu.
+
+**Redosled koraka:**
+
+1. **Podignuti hosting i osnovni WordPress.** Lokalno (LocalWP/XAMPP) za vežbu, ili
+   pravi hosting za odbranu. Instalirati WooCommerce i temu **Storefront**.
+2. **Uploadovati child temu.** Spakovati `child-tema-zrno-doma/` u ZIP i
+   instalirati/aktivirati (Appearance → Themes → Add New → Upload Theme).
+3. **(Opciono, ubrzava posao) Pokrenuti `setup-wp-cli.sh`** preko SSH-a/WP-CLI na
+   hostingu — automatski aktivira temu, instalira plugin-ove, podešava WooCommerce
+   (RSD, Srbija), kreira kategorije, 2 korisnika sa različitim ulogama, svih 7
+   proizvoda sa upsell/cross-sell vezama i kupon. Pre pokretanja obavezno pročitati
+   komentare na vrhu skripte (nije testirana na živom serveru, proverite
+   `wp wc product create --help` na svom WP-CLI pre punog pokretanja).
+   - Ako preskačete skriptu: proizvode ručno uneti ili uvesti kroz
+     `katalog-proizvoda-woocommerce-import.csv` (WooCommerce → Products → Import).
+4. **Chatbot:** registrovati Tidio nalog (zahteva browser/OAuth, ne može se
+   skriptovati), instalirati Tidio plugin, uneti sadržaj iz
    `chatbot-skripta-baza-znanja.md`.
-4. **Vizuali:** pokrenuti prompt-ove iz Zadatka 1 (poglavlje 5) u alatu za
-   generisanje slika po izboru i postaviti rezultate na proizvode/sajt.
-5. **Screenshotovi:** za svaki zahtev u `vodic-izvrsenje-svih-zahteva.md` (Zadatak 3)
-   uraditi screenshot označen kao "Dokaz" i ubaciti u dokument pre predaje.
-6. **Popuniti podatke tima:** zameniti `[Ime i prezime drugog člana tima]` u sva tri
-   .docx dokumenta stvarnim imenom.
+5. **Vizuali:** pokrenuti prompt-ove iz Zadatka 1 (poglavlje 5) u alatu za
+   generisanje slika po izboru (Bing Image Creator / ChatGPT / Canva AI) i postaviti
+   rezultate na proizvode/sajt/društvene mreže.
+6. **SEO:** proći kroz `seo-checklist.md` (fokus ključne reči, sitemap, alt tekst).
 7. **Test porudžbine:** generisati minimum 20 porudžbina radi WooCommerce analitike
-   (zahtev 9, Zadatak 3).
+   (zahtev 9, Zadatak 3) — ručno, kroz frontend ili WooCommerce → Orders → Add order.
+8. **Screenshotovi:** za svaki zahtev u `vodic-izvrsenje-svih-zahteva.md` (Zadatak 3)
+   uraditi screenshot označen kao "Dokaz" i ubaciti u `.docx` dokument.
+9. **Popuniti podatke tima:** zameniti `[Ime i prezime drugog člana tima]` u sva tri
+   .docx dokumenta stvarnim imenom.
+10. **Priprema za odbranu:** proći kroz sve dokumente da možete samostalno da
+    objasnite i uživo demonstrirate svaku odluku.
 
 ## Napomena o akademskom integritetu
 

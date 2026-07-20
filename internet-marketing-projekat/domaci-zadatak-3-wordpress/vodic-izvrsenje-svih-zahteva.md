@@ -22,6 +22,12 @@ tim izvodi u WordPress admin panelu, i mesto gde se prilaže dokaz izvršenja
 vežbu, ili pravi hosting za odbranu) sa instaliranim WooCommerce plugin-om i
 roditeljskom temom **Storefront**.
 
+**Automatizacija:** skripta `setup-wp-cli.sh` (u ovom folderu) automatski odrađuje
+najveći deo ručnih koraka za zahteve 2, 3 (delimično), 5, 6, 7 i 8 (kupon), ukoliko
+imate WP-CLI pristup hostingu. Videti komentare na vrhu skripte za uputstvo
+pokretanja. Koraci ispod i dalje važe kao referenca i za ono što skripta ne pokriva
+(chatbot, slike, screenshotovi, test porudžbine).
+
 ---
 
 # Zahtev 1 — Sajt u kontekstu teme seminarskog rada
