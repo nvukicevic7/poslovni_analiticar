@@ -75,8 +75,8 @@ stranici/proizvodu nalaze se u `seo-checklist.md`.
 **Koraci:** videti `seo-checklist.md` za pun postupak (instalacija Yoast SEO,
 podešavanje fokus ključnih reči, sitemap, permalinks, alt tekstovi).
 
-**Dokaz:** parovi screenshotova "pre/posle" Yoast SEO analize za minimum 3
-stranice/proizvoda (videti `seo-checklist.md`, poglavlje 3).
+**Dokaz:** parovi screenshotova "pre/posle" Yoast SEO analize za 2
+proizvoda (videti `seo-checklist.md`, poglavlje 3).
 
 ---
 
