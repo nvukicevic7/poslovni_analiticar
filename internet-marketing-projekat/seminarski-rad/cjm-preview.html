@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<title>Zrno Doma Journey Map</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Karla:wght@400;500;600;700&display=swap');
+
+  :root {
+    --bg: #faf6f1;
+    --surface: #ffffff;
+    --surface-2: #f3ece2;
+    --ink: #3b2a20;
+    --ink-soft: #7a6a5c;
+    --line: #e4d8c8;
+    --primary: #6f4e37;
+    --primary-soft: #a9866c;
+    --accent: #c8a165;
+    --pain: #b5563c;
+    --pain-bg: #f6e6e0;
+    --solution: #5f7a52;
+    --solution-bg: #e9efe3;
+    --phase-1: #6f4e37;
+    --phase-2: #8a6349;
+    --phase-3: #a97b52;
+    --phase-4: #c8a165;
+    --phase-5: #d9bb87;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #211a14;
+      --surface: #2b221b;
+      --surface-2: #362b22;
+      --ink: #f1e6da;
+      --ink-soft: #b8a794;
+      --line: #4a3b2e;
+      --primary: #d9bb87;
+      --primary-soft: #b8926a;
+      --accent: #e0b876;
+      --pain: #e08468;
+      --pain-bg: #3c2a24;
+      --solution: #9ab98a;
+      --solution-bg: #26311f;
+      --phase-1: #8a6349;
+      --phase-2: #a97b52;
+      --phase-3: #c8a165;
+      --phase-4: #d9bb87;
+      --phase-5: #e7cfa2;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #211a14;
+    --surface: #2b221b;
+    --surface-2: #362b22;
+    --ink: #f1e6da;
+    --ink-soft: #b8a794;
+    --line: #4a3b2e;
+    --primary: #d9bb87;
+    --primary-soft: #b8926a;
+    --accent: #e0b876;
+    --pain: #e08468;
+    --pain-bg: #3c2a24;
+    --solution: #9ab98a;
+    --solution-bg: #26311f;
+    --phase-1: #8a6349;
+    --phase-2: #a97b52;
+    --phase-3: #c8a165;
+    --phase-4: #d9bb87;
+    --phase-5: #e7cfa2;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Karla', sans-serif;
+    margin: 0;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+
+  header.page-head {
+    margin-bottom: 2.75rem;
+  }
+
+  .eyebrow {
+    font-family: 'Karla', sans-serif;
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--primary-soft);
+    margin: 0 0 0.6rem;
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-size: clamp(1.9rem, 3.6vw, 2.7rem);
+    line-height: 1.08;
+    margin: 0 0 0.65rem;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+
+  .page-sub {
+    font-size: 1rem;
+    color: var(--ink-soft);
+    max-width: 62ch;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  section.persona {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 1.9rem clamp(1rem, 3vw, 2.2rem) 2.2rem;
+    margin-bottom: 2.4rem;
+  }
+
+  .persona-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.1rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .persona-name {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: var(--primary);
+  }
+
+  .persona-tag {
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+  }
+
+  .journey-scroll {
+    overflow-x: auto;
+    padding-bottom: 0.3rem;
+    margin: 0 -0.2rem;
+  }
+
+  .journey {
+    display: grid;
+    grid-template-columns: 132px repeat(5, minmax(178px, 1fr));
+    gap: 0;
+    min-width: 900px;
+  }
+
+  .row-label {
+    font-family: 'Karla', sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    padding: 0.85rem 0.7rem 0.85rem 0.1rem;
+  }
+
+  .phase-head {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #fff;
+    padding: 0.7rem 0.9rem;
+    border-radius: 10px 10px 0 0;
+    text-align: left;
+  }
+
+  .journey > .phase-head:nth-of-type(1) { background: var(--phase-1); }
+  .journey > .phase-head:nth-of-type(2) { background: var(--phase-2); }
+  .journey > .phase-head:nth-of-type(3) { background: var(--phase-3); }
+  .journey > .phase-head:nth-of-type(4) { background: var(--phase-4); color: var(--ink); }
+  .journey > .phase-head:nth-of-type(5) { background: var(--phase-5); color: var(--ink); }
+
+  .cell {
+    background: var(--surface-2);
+    padding: 0.85rem 0.9rem;
+    font-size: 0.88rem;
+    line-height: 1.42;
+    border-top: 3px solid transparent;
+  }
+
+  .row-emotion .cell { background: transparent; padding-top: 0.3rem; }
+
+  .cell.pain { background: var(--pain-bg); color: var(--pain); font-weight: 600; }
+  .cell.solution { background: var(--solution-bg); color: var(--solution); font-weight: 600; }
+  .cell.empty { background: transparent; }
+
+  .emotion-chart {
+    grid-column: 2 / -1;
+    padding: 0.4rem 0.4rem 0.9rem;
+  }
+
+  .emotion-svg text {
+    font-family: 'Karla', sans-serif;
+    font-size: 11px;
+    fill: var(--ink-soft);
+  }
+
+  footer.note {
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    max-width: 68ch;
+    line-height: 1.6;
+    margin-top: 0.5rem;
+  }
+
+  footer.note strong { color: var(--ink); }
+</style>
+
+<div class="wrap">
+  <header class="page-head">
+    <p class="eyebrow">Zrno Doma · Mapa korisničkog iskustva</p>
+    <h1>Dva puta do prve šolje</h1>
+    <p class="page-sub">Customer Journey Map za dve persone iz seminarskog rada — od prvog susreta sa brendom do ponovljene kupovine. Referenca za CJM sekciju; prekopiraj raspored u Canva ili direktno u dokument.</p>
+  </header>
+
+  <section class="persona">
+    <div class="persona-head">
+      <span class="persona-name">Ana Petrović</span>
+      <span class="persona-tag">29 · marketing menadžerka · "kafeni entuzijasta"</span>
+    </div>
+    <div class="journey-scroll">
+      <div class="journey">
+        <div></div>
+        <div class="phase-head">Svesnost</div>
+        <div class="phase-head">Razmatranje</div>
+        <div class="phase-head">Odluka</div>
+        <div class="phase-head">Kupovina</div>
+        <div class="phase-head">Post-kupovina</div>
+
+        <div class="row-label">Aktivnost</div>
+        <div class="cell">Vidi objavu o Zrno Doma na Instagramu</div>
+        <div class="cell">Otvara sajt, čita blog o poreklu zrna</div>
+        <div class="cell">Poredi tri profila pečenja, pita chatbot</div>
+        <div class="cell">Naručuje probni paket (3 pečenja)</div>
+        <div class="cell">Prima paket, prati uputstvo za pripremu</div>
+
+        <div class="row-label">Kontakt tačka</div>
+        <div class="cell">Instagram objava, hešteg pretraga</div>
+        <div class="cell">Sajt, blog sekcija</div>
+        <div class="cell">Stranica proizvoda, chatbot</div>
+        <div class="cell">Korpa, checkout, kartica</div>
+        <div class="cell">Dostava, blog uputstvo, email</div>
+
+        <div class="row-label">Bolna tačka</div>
+        <div class="cell empty">—</div>
+        <div class="cell empty">—</div>
+        <div class="cell pain">Ne zna kojem pečenju da veruje bez probe</div>
+        <div class="cell empty">—</div>
+        <div class="cell pain">Strah da zrna nisu zaista sveža</div>
+
+        <div class="row-label">Rešenje</div>
+        <div class="cell empty">—</div>
+        <div class="cell empty">—</div>
+        <div class="cell solution">Probni paket sa sva tri pečenja</div>
+        <div class="cell empty">—</div>
+        <div class="cell solution">Datum pečenja vidljiv na svakoj kesi</div>
+
+        <div class="row-label">Emocija</div>
+        <div class="emotion-chart">
+          <svg class="emotion-svg" viewBox="0 0 900 90" width="100%" height="90" preserveAspectRatio="none">
+            <polyline points="90,64 270,50 450,42 630,22 810,10" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <g fill="var(--primary)">
+              <circle cx="90" cy="64" r="5"/><circle cx="270" cy="50" r="5"/><circle cx="450" cy="42" r="5"/><circle cx="630" cy="22" r="5"/><circle cx="810" cy="10" r="5"/>
+            </g>
+            <text x="90" y="82" text-anchor="middle">Znatiželja</text>
+            <text x="270" y="82" text-anchor="middle">Interesovanje</text>
+            <text x="450" y="82" text-anchor="middle">Poverenje</text>
+            <text x="630" y="82" text-anchor="middle">Zadovoljstvo</text>
+            <text x="810" y="82" text-anchor="middle">Lojalnost</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="persona">
+    <div class="persona-head">
+      <span class="persona-name">Miloš Ilić</span>
+      <span class="persona-tag">34 · dobio moka lonac na poklon · "kućni baristA početnik"</span>
+    </div>
+    <div class="journey-scroll">
+      <div class="journey">
+        <div></div>
+        <div class="phase-head">Svesnost</div>
+        <div class="phase-head">Razmatranje</div>
+        <div class="phase-head">Odluka</div>
+        <div class="phase-head">Kupovina</div>
+        <div class="phase-head">Post-kupovina</div>
+
+        <div class="row-label">Aktivnost</div>
+        <div class="cell">Traži na Google-u "kako spremiti kafu u moka loncu"</div>
+        <div class="cell">Čita uputstvo, vidi predlog zrna</div>
+        <div class="cell">Pita chatbot za opremu za početnike</div>
+        <div class="cell">Kupuje Brazil Santos uz cross-sell predlog</div>
+        <div class="cell">Prati recept, uspešno sprema prvu šolju</div>
+
+        <div class="row-label">Kontakt tačka</div>
+        <div class="cell">SEO — blog tekst na sajtu</div>
+        <div class="cell">Blog, unakrsni link ka proizvodu</div>
+        <div class="cell">Chatbot na stranici proizvoda</div>
+        <div class="cell">Stranica proizvoda, cross-sell sekcija</div>
+        <div class="cell">Blog, email potvrda porudžbine</div>
+
+        <div class="row-label">Bolna tačka</div>
+        <div class="cell pain">Ne zna koju opremu treba da kupi</div>
+        <div class="cell empty">—</div>
+        <div class="cell pain">Strah da će "pokvariti" kafu</div>
+        <div class="cell empty">—</div>
+        <div class="cell empty">—</div>
+
+        <div class="row-label">Rešenje</div>
+        <div class="cell solution">Chatbot i blog jasno preporučuju opremu</div>
+        <div class="cell empty">—</div>
+        <div class="cell solution">Jednostavna uputstva korak po korak</div>
+        <div class="cell empty">—</div>
+        <div class="cell empty">—</div>
+
+        <div class="row-label">Emocija</div>
+        <div class="emotion-chart">
+          <svg class="emotion-svg" viewBox="0 0 900 90" width="100%" height="90" preserveAspectRatio="none">
+            <polyline points="90,72 270,50 450,54 630,30 810,8" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <g fill="var(--primary)">
+              <circle cx="90" cy="72" r="5"/><circle cx="270" cy="50" r="5"/><circle cx="450" cy="54" r="5"/><circle cx="630" cy="30" r="5"/><circle cx="810" cy="8" r="5"/>
+            </g>
+            <text x="90" y="88" text-anchor="middle">Nesigurnost</text>
+            <text x="270" y="88" text-anchor="middle">Olakšanje</text>
+            <text x="450" y="88" text-anchor="middle">Podrška</text>
+            <text x="630" y="88" text-anchor="middle">Samopouzdanje</text>
+            <text x="810" y="88" text-anchor="middle">Ponos</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="note">
+    Napomena o GVI: raspored i tekst ove mape generisani su uz pomoć alata Claude (Anthropic) na osnovu podataka iz seminarskog rada projekta <strong>Zrno Doma</strong>. Pregledaj i prilagodi pre prenošenja u Canva/Word, u skladu sa Opštim smernicama FON-a za korišćenje GVI.
+  </footer>
+</div>
